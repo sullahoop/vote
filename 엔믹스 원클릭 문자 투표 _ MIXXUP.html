@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<!-- saved from url=(0014)about:internet -->
+<html lang="kr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Open Graph 메타 태그 -->
+    <meta property="og:title" content="엔믹스 원클릭 문자 투표">
+    <meta property="og:description" content="이 링크를 통해 쉽게 문자 투표를 하실 수 있습니다. | MIXXUP">
+    <meta property="og:image" content="/vote/static/nmixx.jpg">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="엔믹스 원클릭 문자 투표">
+    <meta name="twitter:description" content="이 링크를 통해 쉽게 문자 투표를 하실 수 있습니다. | MIXXUP">
+    <meta name="twitter:image" content="/vote/static/nmixx.jpg">
+    <meta name="twitter:url" content="https://nmixx.net/vote">
+
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>엔믹스 원클릭 문자 투표 | MIXXUP</title>
+
+    <link rel="icon" type="image/png" href="https://nmixx.net/ico/nmixxtools_ico.png?v=2.1">
+
+    <!-- Google tag (gtag.js) -->
+    <script async="" src="./엔믹스 원클릭 문자 투표 _ MIXXUP_files/js"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-930063E2Q9');
+    </script>
+
+    <link rel="stylesheet" href="./엔믹스 원클릭 문자 투표 _ MIXXUP_files/all.min.css">
+    <link rel="stylesheet" href="./엔믹스 원클릭 문자 투표 _ MIXXUP_files/style.css">
+</head>
+
+<body>
+    <div class="container">
+        <p class="title" id="title">쇼!음악중심 문자투표</p>
+        <img src="./엔믹스 원클릭 문자 투표 _ MIXXUP_files/nmixx.jpg" alt="엔믹스" class="vote-image" loading="lazy">
+        <p class="info" id="info_message">※ 이 투표는 100원의 정보이용료가 부과됩니다 ※</p>
+        <p class="countdown" id="redirect_message" style="display: none;">이동합니다</p>
+        <button id="retry_button" style="display: inline-block;" onclick="urlRedirect()">다시 시도하기</button>
+        <footer>
+            <p>© 2024 SDY One Click Vote Service</p>
+            <p>HOME | <a href="https://nmixx.net/">NMIXX.NET</a></p>
+        </footer>
+    </div>
+
+    <script>
+        // 서버에서 전달받은 투표 정보
+        const voteInfo = {"title": "쇼!음악중심 문자투표", "info": "※ 이 투표는 100원의 정보이용료가 부과됩니다 ※", "before_vote_message": "엔믹스를 위해 투표해주세요!", "after_vote_message": "투표해주셔서 감사합니다", "android_url": "sms:%230505?body=NMIXX", "ios_url": "sms:%230505&body=NMIXX", "etc_url": "sms:%230505?body=NMIXX", "open_time": "2000-01-01 00:00", "close_time": "2100-01-01 00:00"};
+        
+        class VoteApp {
+            constructor() {
+                this.elements = {};
+                this.init();
+            }
+
+            init() {
+                this.cacheElements();
+                window.addEventListener("load", () => this.initializeApp());
+            }
+
+            cacheElements() {
+                this.elements = {
+                    title: document.getElementById("title"),
+                    infoMessage: document.getElementById("info_message"),
+                    redirectMessage: document.getElementById("redirect_message"),
+                    retryButton: document.getElementById("retry_button")
+                };
+            }
+
+            initializeApp() {
+                this.updateUI();
+                this.handleCountdown();
+                // OS 감지는 내부적으로만 수행 (화면 표시 안함)
+                this.detectPlatform();
+            }
+
+            updateUI() {
+                this.elements.title.innerText = voteInfo.title || "[ TITLE ERROR ]";
+                this.elements.infoMessage.innerText = voteInfo.info || "[ INFO ERROR ]";
+                this.elements.retryButton.style.display = "none";
+            }
+
+            getPlatformSpecificUrl() {
+                const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+                
+                if (/android|Tizen/i.test(userAgent)) {
+                    return voteInfo.android_url;
+                } else if (/iPad|iPhone|iPod|Mac OS X|watchOS/.test(userAgent) && !window.MSStream) {
+                    return voteInfo.ios_url;
+                } else {
+                    return voteInfo.etc_url;
+                }
+            }
+
+            detectPlatform() {
+                // 플랫폼 감지는 내부적으로만 수행 (화면에 표시하지 않음)
+                const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+                const osMap = [
+                    { pattern: /android/i, name: "Android" },
+                    { pattern: /Tizen/i, name: "Tizen(Watch)" },
+                    { pattern: /iPad/i, name: "iOS(iPad)" },
+                    { pattern: /iPhone/i, name: "iOS(iPhone)" },
+                    { pattern: /iPod/i, name: "iOS(iPod)" },
+                    { pattern: /watchOS/i, name: "watchOS(AppleWatch)" },
+                    { pattern: /Windows NT/i, name: "Windows" },
+                    { pattern: /Mac OS X/i, name: "MacOS" }
+                ];
+
+                let os = "기타(기기분류불가)";
+                for (const { pattern, name } of osMap) {
+                    if (pattern.test(userAgent) && !window.MSStream) {
+                        os = name;
+                        break;
+                    }
+                }
+
+                // 플랫폼 정보를 내부적으로 저장 (필요시 사용)
+                this.detectedPlatform = os;
+                console.log(`Detected platform: ${os}`);
+            }
+
+            handleCountdown() {
+                const now = new Date();
+                const voteStartTime = new Date(voteInfo.open_time);
+                const voteEndTime = new Date(voteInfo.close_time);
+
+                if (now < voteStartTime) {
+                    this.updateCountdown(voteStartTime);
+                } else if (now >= voteStartTime && now <= voteEndTime) {
+                    this.redirectToVote();
+                } else {
+                    this.endVote();
+                }
+            }
+
+            updateCountdown(targetTime) {
+                const now = new Date();
+                const timeDiff = targetTime - now;
+
+                if (timeDiff <= 0) {
+                    this.redirectToVote();
+                    return;
+                }
+
+                const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+
+                this.elements.redirectMessage.innerText = 
+                    `투표 시작 ${days}일 ${hours}시간 ${minutes}분 ${seconds}초 전입니다`;
+                
+                setTimeout(() => this.updateCountdown(targetTime), 1000);
+            }
+
+            redirectToVote() {
+                let secondsLeft = 2;
+                this.elements.redirectMessage.innerText = `${secondsLeft}초 후 이동합니다`;
+
+                const countdownInterval = setInterval(() => {
+                    secondsLeft--;
+                    if (secondsLeft > 0) {
+                        this.elements.redirectMessage.innerText = `${secondsLeft}초 후 이동합니다`;
+                    } else {
+                        clearInterval(countdownInterval);
+                        this.elements.redirectMessage.innerText = "이동합니다";
+                        this.urlRedirect();
+                        setTimeout(() => {
+                            this.elements.retryButton.style.display = "inline-block";
+                            this.elements.redirectMessage.style.display = "none";
+                        }, 1000);
+                    }
+                }, 1000);
+            }
+
+            urlRedirect() {
+                const platformSpecificUrl = this.getPlatformSpecificUrl();
+                window.location.href = platformSpecificUrl;
+            }
+
+            endVoteGoHome() {
+                if (confirm("투표가 종료되었습니다.\n메인 페이지로 넘어가시겠습니까?")) {
+                    window.location.href = "https://nmixx.net";
+                }
+            }
+
+            endVote() {
+                this.elements.redirectMessage.innerText = "투표가 종료되었습니다";
+                setTimeout(() => this.endVoteGoHome(), 300);
+            }
+        }
+
+        // 전역 함수로 유지 (onclick 이벤트에서 사용)
+        window.urlRedirect = () => {
+            if (window.voteApp) {
+                window.voteApp.urlRedirect();
+            }
+        };
+
+        // 앱 초기화
+        window.voteApp = new VoteApp();
+    </script>
+<script defer="" src="./엔믹스 원클릭 문자 투표 _ MIXXUP_files/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon="{&quot;version&quot;:&quot;2024.11.0&quot;,&quot;token&quot;:&quot;376716322b4c4896a40d4e05d95f5d45&quot;,&quot;r&quot;:1,&quot;server_timing&quot;:{&quot;name&quot;:{&quot;cfCacheStatus&quot;:true,&quot;cfEdge&quot;:true,&quot;cfExtPri&quot;:true,&quot;cfL4&quot;:true,&quot;cfOrigin&quot;:true,&quot;cfSpeedBrain&quot;:true},&quot;location_startswith&quot;:null}}" crossorigin="anonymous"></script>
+
+
+</body></html>
