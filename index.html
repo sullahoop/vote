@@ -53,6 +53,7 @@
             constructor() {
                 this.elements = {};
                 this.init();
+                this.cd = true;
             }
 
             init() {
@@ -130,10 +131,13 @@
                 if (now < voteStartTime) {
                     this.updateCountdown(voteStartTime);
                 } else if (now >= voteStartTime && now <= voteEndTime) {
+                    this.cd = false;
                     this.redirectToVote();
                 } else {
                     this.endVote();
                 }
+
+                if (this.cd) this.handleCountdown();
             }
 
             updateCountdown(targetTime) {
