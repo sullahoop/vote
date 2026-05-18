@@ -136,6 +136,7 @@
             }
 
             updateCountdown(targetTime) {
+                console.log(targetTime);
                 const now = new Date();
                 const timeDiff = targetTime - now;
 
@@ -156,6 +157,7 @@
             }
 
             redirectToVote() {
+                return false;
                 let secondsLeft = 2;
                 this.elements.redirectMessage.innerText = `${secondsLeft}초 후 이동합니다`;
 
