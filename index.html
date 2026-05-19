@@ -47,10 +47,13 @@
 
     <script>
         // 서버에서 전달받은 투표 정보
-        const voteInfo = {"title": "엠카운트다운 사전투표", "info": "", "before_vote_message": "엔믹스를 위해 투표해주세요!", "after_vote_message": "투표해주셔서 감사합니다", "android_url": "https://mnetplus.onelink.me/TRa8/t9zck1c1?custom_link_value=vote%2Fv2%2F6a02b7c44ffc181ab87c6db4", "ios_url": "https://mnetplus.onelink.me/TRa8/t9zck1c1?custom_link_value=vote%2Fv2%2F6a02b7c44ffc181ab87c6db4", "etc_url": "https://mnetplus.onelink.me/TRa8/t9zck1c1?custom_link_value=vote%2Fv2%2F6a02b7c44ffc181ab87c6db4", "open_time": new Date(), "close_time": "2100-01-01 00:00"};
+        const voteInfo = {"title": "엠카운트다운 사전투표", "info": "", "before_vote_message": "엔믹스를 위해 투표해주세요!", "after_vote_message": "투표해주셔서 감사합니다", "android_url": "https://mnetplus.onelink.me/TRa8/t9zck1c1?custom_link_value=vote%2Fv2%2F6a02b7c44ffc181ab87c6db4", "ios_url": "https://mnetplus.onelink.me/TRa8/t9zck1c1?custom_link_value=vote%2Fv2%2F6a02b7c44ffc181ab87c6db4", "etc_url": "https://mnetplus.onelink.me/TRa8/t9zck1c1?custom_link_value=vote%2Fv2%2F6a02b7c44ffc181ab87c6db4", "open_time": "", "close_time": "2100-01-01 00:00:00"};
         
         class VoteApp {
             constructor() {
+                let now = new Date();
+                voteInfo.open_time = `${now.getFullYear()}-${now.getMonth()+1}-${now.getDate()} ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
+
                 this.elements = {};
                 this.init();
                 this.cd = true;
