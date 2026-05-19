@@ -37,8 +37,8 @@
         <p class="title" id="title">엠카운트다운 사전투표</p>
         <img src="./엔믹스 원클릭 문자 투표 _ MIXXUP_files/nmixx.jpg" alt="엔믹스" class="vote-image" loading="lazy">
         <p class="info" id="info_message" style="display: none;">※ 이 투표는 100원의 정보이용료가 부과됩니다 ※</p>
-        <p class="countdown" id="redirect_message" style="display: none;">이동합니다</p>
-        <button id="retry_button" style="display: inline-block;" onclick="urlRedirect()">다시 시도하기</button>
+        <p class="countdown" id="redirect_message" style="display: inline-block;">이동합니다</p>
+        <button id="retry_button" style="display: none;" onclick="urlRedirect()">다시 시도하기</button>
         <footer>
             <p>© 2024 SDY One Click Vote Service</p>
             <p>HOME | <a href="https://nmixx.net/">NMIXX.NET</a></p>
@@ -47,7 +47,7 @@
 
     <script>
         // 서버에서 전달받은 투표 정보
-        const voteInfo = {"title": "엠카운트다운 사전투표", "info": "", "before_vote_message": "엔믹스를 위해 투표해주세요!", "after_vote_message": "투표해주셔서 감사합니다", "android_url": "https://mnetplus.onelink.me/TRa8/t9zck1c1?custom_link_value=vote%2Fv2%2F6a02b7c44ffc181ab87c6db4", "ios_url": "https://mnetplus.onelink.me/TRa8/t9zck1c1?custom_link_value=vote%2Fv2%2F6a02b7c44ffc181ab87c6db4", "etc_url": "https://mnetplus.onelink.me/TRa8/t9zck1c1?custom_link_value=vote%2Fv2%2F6a02b7c44ffc181ab87c6db4", "open_time": "", "close_time": "2100-01-01 00:00:00"};
+        const voteInfo = {"title": "엠카운트다운 사전투표", "info": "", "before_vote_message": "엔믹스를 위해 투표해주세요!", "after_vote_message": "투표해주셔서 감사합니다", "android_url": "https://mnetplus.onelink.me/TRa8/t9zck1c1?custom_link_value=vote%2Fv2%2F6a02b7c44ffc181ab87c6db4", "ios_url": "https://mnetplus.onelink.me/TRa8/t9zck1c1?custom_link_value=vote%2Fv2%2F6a02b7c44ffc181ab87c6db4", "etc_url": "https://mnetplus.onelink.me/TRa8/t9zck1c1?custom_link_value=vote%2Fv2%2F6a02b7c44ffc181ab87c6db4", "open_time": "2000-01-01 00:00:00", "close_time": "2100-01-01 00:00:00"};
         
         class VoteApp {
             constructor() {
@@ -55,7 +55,6 @@
                 voteInfo.open_time = `${now.getFullYear()}-${now.getMonth()+1}-${now.getDate()} ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()+3}`;
 
                 this.elements = {};
-                this.cd = true;
                 this.init();
             }
 
@@ -126,7 +125,6 @@
             }
 
             handleCountdown() {
-                console.log(123);
                 const now = new Date();
                 const voteStartTime = new Date(voteInfo.open_time);
                 const voteEndTime = new Date(voteInfo.close_time);
@@ -134,17 +132,13 @@
                 if (now < voteStartTime) {
                     this.updateCountdown(voteStartTime);
                 } else if (now >= voteStartTime && now <= voteEndTime) {
-                    this.cd = false;
                     this.redirectToVote();
                 } else {
                     this.endVote();
                 }
-
-                if (this.cd) this.handleCountdown();
             }
 
             updateCountdown(targetTime) {
-                console.log(targetTime);
                 const now = new Date();
                 const timeDiff = targetTime - now;
 
@@ -165,8 +159,6 @@
             }
 
             redirectToVote() {
-                console.log("redirected");
-                return false;
                 let secondsLeft = 2;
                 this.elements.redirectMessage.innerText = `${secondsLeft}초 후 이동합니다`;
 
